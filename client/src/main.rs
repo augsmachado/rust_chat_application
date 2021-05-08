@@ -29,5 +29,20 @@ fn main() {
                 break;
             }
         }
+
+        match rx.try_recv() {
+            Ok(msg) => {
+                let mut buff = msg.clone().into_bytes();
+                buff.resize(MSG_SIZE, 0);
+                client.write_all(&buff).expect("writing to socket failed");
+                println!("message sent {:?}", msg);
+            },
+            Err(TryRecvError::Empty) => (),
+            Err(TryRecvError::Disconnected) => break
+        }
+
+        thread::sleep(Duration::from_millis(100));
     });
+
+    
 }
