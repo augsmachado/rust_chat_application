@@ -1,0 +1,1 @@
+/Users/augustomachado/github/rust_chat_application/server/target/debug/server: /Users/augustomachado/github/rust_chat_application/server/src/lib.rs /Users/augustomachado/github/rust_chat_application/server/src/main.rs

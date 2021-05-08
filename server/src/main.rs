@@ -13,7 +13,7 @@ fn main() {
     let mut clients = vec![];
     let (tx, rx) = mpsc::channel::<String>();
     loop {
-        if let OK((mut socket, addr)) = server.accept() {
+        if let Ok((mut socket, addr)) = server.accept() {
             println!("Client {} connected", addr);
 
             let tx = tx.clone();
@@ -36,7 +36,24 @@ fn main() {
                         break;
                     }
                 }
+
+                sleep();
             });
         }
+
+        if let Ok(msg) = rx.try_recv() {
+            clients = clients.into_iter().filter_map(|mut client| {
+                let mut buff = msg.clone().into_bytes();
+                buff.resize(MSG_SIZE, 0);
+
+                client.write_all(&buff).map(|_| client).ok()
+            }).collect::<Vec<_>>(); 
+        }
+
+        sleep();
     }
+}
+
+fn sleep() {
+    thread::sleep(::std::time::Duration::from_millis(100));
 }
